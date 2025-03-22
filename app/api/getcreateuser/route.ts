@@ -8,6 +8,8 @@ export async function GET(request: NextRequest) {
 
   const searchParams = request.nextUrl.searchParams;
   const email = searchParams.get("email");
+  const name = searchParams.get("name");
+  const photo = searchParams.get("photo");
 
   await connectDB();
 
@@ -16,7 +18,7 @@ export async function GET(request: NextRequest) {
   if(data) {
     return Response.json({data: data});
   } else {
-    const data = await User.insertOne({ email, name: `Guest-${uuidv4().substring(0, 8)}`, photoUrl: "" });
+    const data = await User.insertOne({ email, name: name ?? "", photoUrl: photo ?? "", role: "" });
     return Response.json({data: data});
   }
 

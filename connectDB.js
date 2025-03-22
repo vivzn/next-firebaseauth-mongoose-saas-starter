@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const DATABASE_URL = "mongodb+srv://vivaan:4871@cluster0xx.4t1cr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0xx";
+const DATABASE_URL = "mongodb+srv://vivaancut:3CSbUcGEb1NQiYZb@mentoriaiwdhack.pudfq.mongodb.net/?retryWrites=true&w=majority&appName=mentoriaiwdhack";
 
 if (!DATABASE_URL) {
   throw new Error("Please define the DATABASE_URL environment variable inside .env.local");

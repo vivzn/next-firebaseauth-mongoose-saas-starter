@@ -7,7 +7,7 @@ import { firebaseConfig } from '@/firebase';
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { createContext, useEffect, useState } from 'react'
 import useSWR from 'swr';
 
@@ -24,11 +24,13 @@ function RootC({
     const [user, setUser] = useState<any>(null);
     const [erBan, setErBan] = useState<any>(false);
 
+    const router = useRouter();
+
     const pathname = usePathname();
 
     const fetcher = (url: string) => fetch(url).then(r => r.json())
 
-    const { data, error } = useSWR(auth ? `/api/getcreateuser?email=${auth?.email}` : null, fetcher)
+    const { data, error } = useSWR(auth ? `/api/getcreateuser?email=${auth?.email}&photo=${auth?.photoURL ?? ""}&name=${auth?.displayName ?? "User"}` : null, fetcher)
 
     useEffect(() => {
         if (error) {
@@ -39,10 +41,11 @@ function RootC({
 
     useEffect(() => {
         if (data) {
-            if(data?.data?.email) {
+            if (data?.data?.email) {
                 setUser(data?.data)
+                console.log(data);
             } else {
-                
+
                 setErBan(true);
             }
         }
@@ -51,6 +54,7 @@ function RootC({
     onAuthStateChanged(getAuth(), function (user) {
         if (user) {
             setAuth(user);
+
 
 
         } else {
@@ -63,15 +67,16 @@ function RootC({
             {((!auth || !user) && !(["/", "/login"]?.includes(pathname))) ? (
                 <div className='w-full h-screen grid place-content-center'>
                     {erBan ? (
-                        <Card className='shadow-none px-6'>
-                            <CardTitle>Oops</CardTitle>
-                            <CardDescription>You are not authenticated</CardDescription>
-                            <CardContent className='p-0 m-0'>
-                                <Link href="/login">
-                                    <Button>Login</Button>
-                                </Link>
-                            </CardContent>
-                        </Card>
+                        <div className="w-full h-full grid place-content-center">
+
+                            <h1 className='text-3xl font-bold'>Not authenticated</h1>
+                            <p className='text-lg mt-2 text-center text-accent-foreground'>You have no account</p>
+                            <Button onClick={() => {
+                                if (typeof window !== "undefined") router.push("/")
+                            }} className="mt-6" variant={"outline"}>
+                                Go back
+                            </Button>
+                        </div>
                     ) : (
                         <LoadingSpinner />
                     )}
